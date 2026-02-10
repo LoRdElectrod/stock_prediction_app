@@ -28,7 +28,7 @@ if run_btn:
         # Save & Upload Raw
         raw_file = f"{ticker}_raw.csv"
         df_raw.to_csv(raw_file, index=False)
-        # upload_to_s3(raw_file, "raw") # Uncomment if you want to push to AWS live
+        upload_to_s3(raw_file, "raw") # Uncomment if you want to push to AWS live
         st.success(f"Uploaded raw data to AWS S3 (simulated)")
 
         # --- PHASE 2: TRANSFORM ---
@@ -39,7 +39,7 @@ if run_btn:
         # Save & Upload Processed
         clean_file = f"{ticker}_processed.csv"
         df_clean.to_csv(clean_file, index=False)
-        # upload_to_s3(clean_file, "processed") # Uncomment if you want to push to AWS live
+        upload_to_s3(clean_file, "processed") # Uncomment if you want to push to AWS live
         
         # --- PHASE 3: VISUALIZE ---
         st.subheader("3. Visualization")

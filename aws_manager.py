@@ -1,38 +1,31 @@
 import boto3
 import os
+import streamlit as st
 from botocore.exceptions import NoCredentialsError
 
-
+# CHANGE THIS to your actual bucket name
 BUCKET_NAME = "stock-prediction-lake-lord"
 
+def get_s3_client():
+    # Check if running on Streamlit Cloud with secrets
+    if hasattr(st, "secrets") and "aws" in st.secrets:
+        return boto3.client(
+            's3',
+            aws_access_key_id=st.secrets["aws"]["aws_access_key_id"],
+            aws_secret_access_key=st.secrets["aws"]["aws_secret_access_key"],
+            region_name="us-east-1"
+        )
+    else:
+        # Fallback to local computer credentials
+        return boto3.client('s3')
+
 def upload_to_s3(file_name, s3_folder="raw"):
-    """
-    Uploads a local file to an S3 bucket.
-    
-    :param file_name: The path to the local file (e.g., 'AAPL_raw.csv')
-    :param s3_folder: The 'folder' in S3 to store it in (e.g., 'raw' or 'processed')
-    """
-    s3 = boto3.client('s3')
-    
-    # If the file is 'AAPL_raw.csv', we want it to be 'raw/AAPL_raw.csv' in S3
+    s3 = get_s3_client()
     object_name = f"{s3_folder}/{os.path.basename(file_name)}"
     
     try:
-        print(f"Uploading {file_name} to s3://{BUCKET_NAME}/{object_name}...")
         s3.upload_file(file_name, BUCKET_NAME, object_name)
-        print("Upload Successful!")
         return True
-    except FileNotFoundError:
-        print("The file was not found")
-        return False
-    except NoCredentialsError:
-        print("Credentials not available")
-        return False
     except Exception as e:
         print(f"Error: {e}")
         return False
-
-if __name__ == "__main__":
-    # Test the function with the file we just created
-    # Make sure you have 'AAPL_raw.csv' in the same folder
-    upload_to_s3("AAPL_raw.csv", s3_folder="raw")
