@@ -37,3 +37,5 @@ It bridges the gap between **Data Engineering** (ETL, Cloud Storage) and **Data 
    pip install -r requirements.txt
 3. Run the app:
    streamlit run app.py
+
+Currently Hosted On: https://stockpredictionapp-3guqwk8j6nmqpthc7eyfta.streamlit.app/
